@@ -1,0 +1,14 @@
+# NB depends on installation of cluster-manager 1.8.0
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: &hostname zotero-webdav.aaron-miller.me
+  namespace: default
+spec:
+  secretName: zotero-webdav.aaron-miller.me-certificate
+  issuerRef:
+    name: zotero-webdav
+    kind: ClusterIssuer
+  commonName: *hostname
+  dnsNames:
+    - *hostname

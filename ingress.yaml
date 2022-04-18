@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: &name zotero-webdav
+  namespace: default
+spec:
+  tls:
+    - hosts:
+        - &hostname zotero-webdav.aaron-miller.me
+      secretName: zotero-webdav.aaron-miller.me-certificate
+  rules:
+    - host: *hostname
+      http:
+        paths:
+          - backend:
+              service:
+                name: *name
+                port:
+                  number: 80
+            pathType: ImplementationSpecific

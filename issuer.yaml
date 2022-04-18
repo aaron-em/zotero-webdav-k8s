@@ -1,0 +1,16 @@
+# NB depends on installation of cluster-manager 1.8.0
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: &name zotero-webdav
+  namespace: default
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: me.zotero-webdav@aaron-miller.me
+    privateKeySecretRef:
+      name: zotero-webdav-acme-private-key
+    solvers:
+      - http01:
+          ingress:
+            class: traefik

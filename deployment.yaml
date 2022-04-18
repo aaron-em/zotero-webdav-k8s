@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: &name zotero-webdav
+  labels:
+    app: *name
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: *name
+  template:
+    metadata:
+      labels:
+        app: *name
+    spec:
+      volumes:
+        - name: &dataVolume data
+          hostPath:
+            path: /opt/zotero-webdav/data
+            type: Directory
+        - name: &htpasswdVolume htpasswd
+          hostPath:
+            path: /opt/zotero-webdav/htpasswd
+            type: File
+      containers:
+        - name: *name
+          image: bytemark/webdav:2.4
+          ports:
+            - containerPort: 80
+          livenessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 15
+          env:
+            - name: AUTH_TYPE
+              value: Basic
+            - name: REALM
+              value: "Zotero WebDAV"
+            - name: SERVER_NAMES
+              value: "zotero-dav.aaron-miller.me,localhost"
+          volumeMounts:
+            - mountPath: /var/lib/dav
+              name: *dataVolume
+            - mountPath: /user.passwd
+              name: *htpasswdVolume
